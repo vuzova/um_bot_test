@@ -86,14 +86,17 @@ async def category(callback: CallbackQuery, state: FSMContext):
 async def enter_score(message: Message, state: FSMContext):
     if message.text.isdigit():
         score = int(message.text)
-        user_data = await state.get_data()
-        anws = await rq.set_score(message.from_user.id, user_data['subject_id'], score)
-        if anws:
-            await message.answer(SCORE_SAVED_MESSAGE)
+        if score >= 0 and score <= 100:
+            user_data = await state.get_data()
+            anws = await rq.set_score(message.from_user.id, user_data['subject_id'], score)
+            if anws:
+                await message.answer(SCORE_SAVED_MESSAGE)
+            else:
+                await message.answer(SCORE_UPDATE_MESSAGE)
+            await state.clear()
+            await show_action_menu(message)
         else:
-            await message.answer(SCORE_UPDATE_MESSAGE)
-        await state.clear()
-        await show_action_menu(message)
+            await message.answer(INVALID_SCORE_RANGE_MESSAGE)
     else:
         await message.answer(INVALID_SCORE_MESSAGE)
 
