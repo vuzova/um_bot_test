@@ -35,17 +35,12 @@ async def set_user(tg_id, name, surname):
 async def set_score(tg_id, subject_id, score):
     async with async_session() as session:
         user = await get_user(tg_id)
-        session.add(Result(user=user.id, subject=subject_id, score=score))
-        await session.commit()
-
-async def set_score(tg_id, subject_id, score):
-    async with async_session() as session:
         if not await get_user_scores_current_sbj(tg_id, subject_id):
-            session.add(Result(user=tg_id, subject=subject_id, score=score))
+            session.add(Result(user=user.id, subject=subject_id, score=score))
             await session.commit()
             return True
         else:
-            result = await get_user_scores_current_sbj(tg_id, subject_id)
+            result = await get_user_scores_current_sbj(user.id, subject_id)
             result.score = score
             await session.commit()
             return False

@@ -68,6 +68,14 @@ async def get_surname(message: Message, state: FSMContext):
     await show_action_menu(message)
 
 
+@router.message(Command(SHOW_SCORES_COMMAND))
+@router.message(F.text == ACTION_SHOW_SCORES)
+async def show_scores(message: Message):
+    scores = await rq.get_user_scores(message.from_user.id)
+    for score in scores:
+        sbj = await rq.get_subject(score.subject)
+        await message.answer(get_score_message(sbj.name, score.score))
+
 @router.message(Command(ENTER_SCORES_COMMAND))
 @router.message(F.text == ACTION_ENTER_SCORES)
 async def enter_scores(message: Message):
@@ -101,10 +109,3 @@ async def enter_score(message: Message, state: FSMContext):
         await message.answer(INVALID_SCORE_MESSAGE)
 
 
-@router.message(Command(SHOW_SCORES_COMMAND))
-@router.message(F.text == ACTION_SHOW_SCORES)
-async def show_scores(message: Message):
-    scores = await rq.get_user_scores(message.from_user.id)
-    for score in scores:
-        sbj = await rq.get_subject(score.subject)
-        await message.answer(get_score_message(sbj.name, score.score))

@@ -5,7 +5,6 @@ from aiogram import Bot, Dispatcher
 
 import logging
 
-
 from app.handlers import router
 from app.database.models import async_main
 
